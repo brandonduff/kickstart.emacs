@@ -52,8 +52,15 @@
   - [[#diminish][Diminish]]
   - [[#rainbow-delimiters][Rainbow Delimiters]]
   - [[#which-key][Which-Key]]
+  - [[#ag][Ag]]
+  - [[#expand-region][Expand region]]
+  - [[#just][Just]]
+  - [[#envrc-support][Envrc support]]
+  - [[#nix][Nix]]
   - [[#ws-butler][Ws-butler]]
 - [[#runtime-performance][Runtime Performance]]
+- [[#my-window-customizations][My window customizations]]
+- [[#regex-for-elixir][regex for elixir]]
 
 * Introduction
 #+begin_src emacs-lisp :tangle no
@@ -521,11 +528,16 @@ To read more about using the built in methods, check out this awesome article fr
 ** Set Theme
 Set gruvbox theme, if you want some themes try out doom-themes.
 Use consult-theme to easily try out themes (*Epilepsy* Warning).
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
     (use-package gruvbox-theme
       :config
       (setq gruvbox-bold-constructs t)
       (load-theme 'gruvbox-dark-medium t)) ;; We need to add t to trust this package
+#+end_src
+
+Actually, let's use a default theme.
+#+begin_src emacs-lisp :tangle yes
+    (load-theme 'modus-vivendi)
 #+end_src
 
 ** Transparency
@@ -537,14 +549,14 @@ With Emacs version 29, true transparency has been added.
 ** Setting Fonts
 #+begin_src emacs-lisp
     (set-face-attribute 'default nil
-                        ;; :font "JetBrains Mono" ;; Set your favorite type of font or download JetBrains Mono
-                        :height 120
+                        :font "Hack Nerd Font" ;; Set your favorite type of font or download JetBrains Mono
+                        :height 130
                         :weight 'medium)
     ;; This sets the default font on all graphical frames created after restarting Emacs.
     ;; Does the same thing as 'set-face-attribute default' above, but emacsclient fonts
     ;; are not right unless I also add this method of setting the default font.
 
-    ;;(add-to-list 'default-frame-alist '(font . "JetBrains Mono")) ;; Set your favorite font
+    (add-to-list 'default-frame-alist '(font . "Hack Nerd Font")) ;; Set your favorite font
     (setq-default line-spacing 0.12)
 #+end_src
 
@@ -597,7 +609,7 @@ You can also make the [[https://github.com/karthink/consult-dir][consult-dir]] p
       ;; (projectile-auto-discover nil) ;; Disable auto search for better startup times ;; Search with a keybind
       (projectile-run-use-comint-mode t) ;; Interactive run dialog when running projects inside emacs (like giving input)
       (projectile-switch-project-action #'projectile-dired) ;; Open dired when switching to a project
-      (projectile-project-search-path '("~/projects/" "~/work/" ("~/github" . 1)))) ;; . 1 means only search the first subdirectory level for projects
+      (projectile-project-search-path '("~/projects/" "~/workspace/" ("~/github" . 1)))) ;; . 1 means only search the first subdirectory level for projects
 #+end_src
 
 ** Eglot
@@ -638,6 +650,11 @@ If you want to use LSP mode check out their [[https://emacs-lsp.github.io/lsp-mo
       )
 #+end_src
 
+#+begin_src emacs-lisp
+    (use-package eglot-java)
+    (add-to-list 'eglot-server-programs '(elixir-ts-mode "elixir-ls"))
+#+end_src
+
 ** Sideline-flymake
 Show flymake errors with sideline.
 #+begin_src emacs-lisp
@@ -672,7 +689,7 @@ You can also use treesit-auto, but it is updated quite slowly so we don't use it
 To explore the current buffer's syntax tree, use the treesit-explore-mode command.
 
 *To use it, remove :tangle no from the beginning of the source code block.*
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
     (setq treesit-language-source-alist
           '((bash "https://github.com/tree-sitter/tree-sitter-bash")
             (cmake "https://github.com/uyha/tree-sitter-cmake")
@@ -680,6 +697,8 @@ To explore the current buffer's syntax tree, use the treesit-explore-mode comman
             (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
             (css "https://github.com/tree-sitter/tree-sitter-css")
             (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+    		(elixir "https://github.com/elixir-lang/tree-sitter-elixir")
+    		(heex "https://github.com/phoenixframework/tree-sitter-heex")
             (go "https://github.com/tree-sitter/tree-sitter-go")
             (gomod "https://github.com/camdencheek/tree-sitter-go-mod")
             (html "https://github.com/tree-sitter/tree-sitter-html")
@@ -687,6 +706,7 @@ To explore the current buffer's syntax tree, use the treesit-explore-mode comman
             (json "https://github.com/tree-sitter/tree-sitter-json")
             (make "https://github.com/alemuller/tree-sitter-make")
             (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+    		(nix "https://github.com/nix-community/tree-sitter-nix")
             (python "https://github.com/tree-sitter/tree-sitter-python")
             (rust "https://github.com/tree-sitter/tree-sitter-rust")
             (toml "https://github.com/tree-sitter/tree-sitter-toml")
@@ -712,6 +732,7 @@ To explore the current buffer's syntax tree, use the treesit-explore-mode comman
             (c-mode . c-ts-mode)
             (c++-mode . c++-ts-mode)
             (css-mode . css-ts-mode)
+    		(elixir-mode . elixir-ts-mode)
             (python-mode . python-ts-mode)
             (mhtml-mode . html-ts-mode)
             (javascript-mode . js-ts-mode)
@@ -726,6 +747,9 @@ To explore the current buffer's syntax tree, use the treesit-explore-mode comman
     (use-package go-mod-ts-mode :ensure nil :mode "\\.mod\\'")
     (use-package rust-ts-mode :ensure nil :mode "\\.rs\\'")
     (use-package tsx-ts-mode :ensure nil :mode "\\.tsx\\'")
+    (use-package yaml-ts-mode :ensure nil :mode "\\.yaml\\'")
+    (use-package nix-ts-mode :ensure nil :mode "\\.nix\\'")
+
 #+end_src
 
 ** Language modes
@@ -743,6 +767,18 @@ Use C-SPC tab to uncomment the lines.
 #     (use-package lua-mode
 #       :mode "\\.lua\\'") ;; Only start in a lua file
 # #+end_src
+
+
+*** Markdown mode
+#+begin_src emacs-lisp
+    (use-package markdown-mode :mode "\\.md\\'")
+#+end_src
+
+
+*** Elixir
+#+begin_src emacs-lisp
+    (use-package elixir-mode)
+#+end_src
 
 *** Org Mode
 One of the things that Emacs is loved for.
@@ -802,9 +838,13 @@ It's more portable and less overhead for users over like vterm or eshell.
 We setup eat with eshell, if you want to use bash, zsh etc., check out their git [[https://codeberg.org/akib/emacs-eat][repository]] how to do it.
 
 If you want a faster and more responsive terminal emulator try out vterm.
+# #+begin_src emacs-lisp
+#     (use-package eat
+#       :hook ('eshell-load-hook #'eat-eshell-mode))
+# #+end_src
+
 #+begin_src emacs-lisp
-    (use-package eat
-      :hook ('eshell-load-hook #'eat-eshell-mode))
+    (use-package vterm)
 #+end_src
 
 * Multi File Example
@@ -1072,6 +1112,32 @@ Which-key is a helper utility for keychords (which key to press).
       (which-key-allow-imprecise-window-fit nil)) ;; Fixes which-key window slipping out in Emacs Daemon
 #+end_src
 
+** Ag
+#+begin_src emacs-lisp :tangle yes
+    (use-package ag)
+#+end_src
+
+** Expand region
+Like alt+up in Intellij.
+#+begin_src emacs-lisp :tangle yes
+    (use-package expand-region :bind (("C-=" . er/expand-region) ("C--" . er/contract-region)))
+#+end_src
+
+** Just
+#+begin_src emacs-lisp :tangle yes
+    (use-package just-ts-mode)
+    (just-ts-mode-install-grammar)
+#+end_src
+** Envrc support
+#+begin_src emacs-lisp
+    (use-package envrc :hook (after-init . envrc-global-mode))
+#+end_src
+** Nix
+#+begin_src emacs-lisp :tangle yes
+    (use-package nix-ts-mode)
+#+end_src
+
+
 ** Ws-butler
 Removes whitespace from the ends of lines.
 #+begin_src emacs-lisp
@@ -1088,3 +1154,19 @@ We also increase Read Process Output Max so Emacs can read more data.
     ;; Increase the amount of data which Emacs reads from the process
     (setq read-process-output-max (* 1024 1024)) ;; 1mb
 #+end_src
+
+* My window customizations
+#+begin_src emacs-lisp
+    (windmove-default-keybindings)
+#+end_src
+
+* regex for elixir
+#+begin_src emacs-lisp
+    (add-to-list 'compilation-error-regexp-alist 'my-stacktrace)
+    (add-to-list 'compilation-error-regexp-alist-alist
+                 '(my-stacktrace
+                   ;; Regex:
+                   ;; Match /path/to/file.ext:line:column (column is optional)
+    			   "\s+\\([a-zA-Z0-9_./\\:-]+[exs|ex]\\):\\([0-9]+\\):\s"
+                   1 2 3))
+#+end_src 

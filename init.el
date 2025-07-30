@@ -156,22 +156,19 @@
 ;;           nil nil t)
 ;;   )
 
-(use-package gruvbox-theme
-  :config
-  (setq gruvbox-bold-constructs t)
-  (load-theme 'gruvbox-dark-medium t)) ;; We need to add t to trust this package
+(load-theme 'modus-vivendi)
 
 (add-to-list 'default-frame-alist '(alpha-background . 90)) ;; For all new frames henceforth
 
 (set-face-attribute 'default nil
-                    ;; :font "JetBrains Mono" ;; Set your favorite type of font or download JetBrains Mono
-                    :height 120
+                    :font "Hack Nerd Font" ;; Set your favorite type of font or download JetBrains Mono
+                    :height 130
                     :weight 'medium)
 ;; This sets the default font on all graphical frames created after restarting Emacs.
 ;; Does the same thing as 'set-face-attribute default' above, but emacsclient fonts
 ;; are not right unless I also add this method of setting the default font.
 
-;;(add-to-list 'default-frame-alist '(font . "JetBrains Mono")) ;; Set your favorite font
+(add-to-list 'default-frame-alist '(font . "Hack Nerd Font")) ;; Set your favorite font
 (setq-default line-spacing 0.12)
 
 (use-package doom-modeline
@@ -195,7 +192,7 @@
   ;; (projectile-auto-discover nil) ;; Disable auto search for better startup times ;; Search with a keybind
   (projectile-run-use-comint-mode t) ;; Interactive run dialog when running projects inside emacs (like giving input)
   (projectile-switch-project-action #'projectile-dired) ;; Open dired when switching to a project
-  (projectile-project-search-path '("~/projects/" "~/work/" ("~/github" . 1)))) ;; . 1 means only search the first subdirectory level for projects
+  (projectile-project-search-path '("~/projects/" "~/workspace/" ("~/github" . 1)))) ;; . 1 means only search the first subdirectory level for projects
 
 (use-package eglot
   :ensure nil ;; Don't install eglot because it's now built-in
@@ -213,6 +210,9 @@
   ;;             `(lua-mode . ("PATH_TO_THE_LSP_FOLDER/bin/lua-language-server" "-lsp"))) ;; Adds our lua lsp server to eglot's server list
   )
 
+(use-package eglot-java)
+(add-to-list 'eglot-server-programs '(elixir-ts-mode "elixir-ls"))
+
 (use-package sideline-flymake
   :hook (flymake-mode . sideline-mode)
   :custom
@@ -221,6 +221,69 @@
 
 (use-package yasnippet-snippets
   :hook (prog-mode . yas-minor-mode))
+
+(setq treesit-language-source-alist
+      '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+        (cmake "https://github.com/uyha/tree-sitter-cmake")
+        (c "https://github.com/tree-sitter/tree-sitter-c")
+        (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
+        (css "https://github.com/tree-sitter/tree-sitter-css")
+        (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+		(elixir "https://github.com/elixir-lang/tree-sitter-elixir")
+		(heex "https://github.com/phoenixframework/tree-sitter-heex")
+        (go "https://github.com/tree-sitter/tree-sitter-go")
+        (gomod "https://github.com/camdencheek/tree-sitter-go-mod")
+        (html "https://github.com/tree-sitter/tree-sitter-html")
+        (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+        (json "https://github.com/tree-sitter/tree-sitter-json")
+        (make "https://github.com/alemuller/tree-sitter-make")
+        (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+		(nix "https://github.com/nix-community/tree-sitter-nix")
+        (python "https://github.com/tree-sitter/tree-sitter-python")
+        (rust "https://github.com/tree-sitter/tree-sitter-rust")
+        (toml "https://github.com/tree-sitter/tree-sitter-toml")
+        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+        (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+        (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+
+(defun start/install-treesit-grammars ()
+  "Install missing treesitter grammars"
+  (interactive)
+  (dolist (grammar treesit-language-source-alist)
+    (let ((lang (car grammar)))
+      (unless (treesit-language-available-p lang)
+        (treesit-install-language-grammar lang)))))
+
+;; Call this function to install missing grammars
+(start/install-treesit-grammars)
+
+;; Optionally, add any additional mode remappings not covered by defaults
+(setq major-mode-remap-alist
+      '((yaml-mode . yaml-ts-mode)
+        (sh-mode . bash-ts-mode)
+        (c-mode . c-ts-mode)
+        (c++-mode . c++-ts-mode)
+        (css-mode . css-ts-mode)
+		(elixir-mode . elixir-ts-mode)
+        (python-mode . python-ts-mode)
+        (mhtml-mode . html-ts-mode)
+        (javascript-mode . js-ts-mode)
+        (json-mode . json-ts-mode)
+        (typescript-mode . typescript-ts-mode)
+        (conf-toml-mode . toml-ts-mode)
+        ))
+
+;; Or if there is no built in mode
+(use-package rust-ts-mode :ensure nil :mode "\\.rs\\'")
+(use-package go-ts-mode :ensure nil :mode "\\.go\\'")
+(use-package go-mod-ts-mode :ensure nil :mode "\\.mod\\'")
+(use-package tsx-ts-mode :ensure nil :mode "\\.tsx\\'")
+(use-package yaml-ts-mode :ensure nil :mode "\\.yaml\\'")
+(use-package nix-ts-mode :ensure nil :mode "\\.nix\\'")
+
+(use-package markdown-mode :mode "\\.md\\'")
+
+(use-package elixir-mode)
 
 (use-package org
   :ensure nil
@@ -249,8 +312,7 @@
   :ensure nil
   :after org)
 
-(use-package eat
-  :hook ('eshell-load-hook #'eat-eshell-mode))
+(use-package vterm)
 
 ;; (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 
@@ -436,8 +498,28 @@
 
 (use-package ws-butler
   :init (ws-butler-global-mode))
+(use-package ag)
+
+(use-package expand-region :bind (("C-=" . er/expand-region) ("C--" . er/contract-region)))
+
+(use-package just-ts-mode)
+(just-ts-mode-install-grammar)
+
+(use-package envrc :hook (after-init . envrc-global-mode))
+
+(use-package nix-ts-mode)
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
 ;; Increase the amount of data which Emacs reads from the process
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
+
+(windmove-default-keybindings)
+
+(add-to-list 'compilation-error-regexp-alist 'my-stacktrace)
+(add-to-list 'compilation-error-regexp-alist-alist
+             '(my-stacktrace
+               ;; Regex:
+               ;; Match /path/to/file.ext:line:column (column is optional)
+			   "\s+\\([a-zA-Z0-9_./\\:-]+[exs|ex]\\):\\([0-9]+\\):\s"
+               1 2 3))
