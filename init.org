@@ -58,6 +58,7 @@
   - [[#envrc-support][Envrc support]]
   - [[#nix][Nix]]
   - [[#ws-butler][Ws-butler]]
+  - [[#recent-f-mode][Recent-f mode]]
 - [[#runtime-performance][Runtime Performance]]
 - [[#my-window-customizations][My window customizations]]
 - [[#regex-for-elixir][regex for elixir]]
@@ -1143,6 +1144,12 @@ Removes whitespace from the ends of lines.
 #+begin_src emacs-lisp
     (use-package ws-butler
       :init (ws-butler-global-mode))
+#+end_src
+
+** Recent-f mode
+Keep track of recent files, search with <Leader> s-r
+#+begin_src emacs-lisp :tangle yes
+    (recentf-mode 1)
 #+end_src
 
 * Runtime Performance

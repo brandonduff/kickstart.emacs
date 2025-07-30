@@ -274,9 +274,10 @@
         ))
 
 ;; Or if there is no built in mode
-(use-package rust-ts-mode :ensure nil :mode "\\.rs\\'")
+(use-package cmake-ts-mode :ensure nil :mode ("CMakeLists\\.txt\\'" "\\.cmake\\'"))
 (use-package go-ts-mode :ensure nil :mode "\\.go\\'")
 (use-package go-mod-ts-mode :ensure nil :mode "\\.mod\\'")
+(use-package rust-ts-mode :ensure nil :mode "\\.rs\\'")
 (use-package tsx-ts-mode :ensure nil :mode "\\.tsx\\'")
 (use-package yaml-ts-mode :ensure nil :mode "\\.yaml\\'")
 (use-package nix-ts-mode :ensure nil :mode "\\.nix\\'")
@@ -496,8 +497,6 @@
   (which-key-max-description-length 25)
   (which-key-allow-imprecise-window-fit nil)) ;; Fixes which-key window slipping out in Emacs Daemon
 
-(use-package ws-butler
-  :init (ws-butler-global-mode))
 (use-package ag)
 
 (use-package expand-region :bind (("C-=" . er/expand-region) ("C--" . er/contract-region)))
@@ -508,6 +507,11 @@
 (use-package envrc :hook (after-init . envrc-global-mode))
 
 (use-package nix-ts-mode)
+
+(use-package ws-butler
+  :init (ws-butler-global-mode))
+
+(recentf-mode 1)
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
