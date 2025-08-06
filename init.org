@@ -18,6 +18,7 @@
   - [[#package-manager][Package manager]]
   - [[#good-defaults][Good Defaults]]
 - [[#important-to-load-first][Important to load first]]
+  - [[#exec-path-from-shell][Exec path from shell]]
   - [[#evil-mode][Evil Mode]]
   - [[#general-keybindings][General Keybindings]]
 - [[#appearance][Appearance]]
@@ -385,6 +386,17 @@ If you plan to use a different package manager, remember to remove this section 
 
 * Important to load first
 Packages that we want to load first so we have them as soon as possible if something breaks.
+** Exec path from shell
+Get emacs to inherit path from the shell environment it's launched in.
+#+begin_src emacs-lisp :tangle yes
+    (use-package exec-path-from-shell
+      :ensure t
+      :config
+      (setenv "SHELL" "/usr/local/bin/zsh")
+      (exec-path-from-shell-initialize))
+#+end_src
+
+
 ** Evil Mode
 An extensible vi/vim layer for Emacs.
 For users who find Emacs's native keybindings less intuitive.
@@ -692,7 +704,7 @@ To explore the current buffer's syntax tree, use the treesit-explore-mode comman
 *To use it, remove :tangle no from the beginning of the source code block.*
 #+begin_src emacs-lisp
     (setq treesit-language-source-alist
-          '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+          '((bash "https://github.com/tree-sitter/tree-sitter-bash" "master" "src")
             (cmake "https://github.com/uyha/tree-sitter-cmake")
             (c "https://github.com/tree-sitter/tree-sitter-c")
             (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
@@ -709,7 +721,6 @@ To explore the current buffer's syntax tree, use the treesit-explore-mode comman
             (markdown "https://github.com/ikatyang/tree-sitter-markdown")
     		(nix "https://github.com/nix-community/tree-sitter-nix")
             (python "https://github.com/tree-sitter/tree-sitter-python")
-            (rust "https://github.com/tree-sitter/tree-sitter-rust")
             (toml "https://github.com/tree-sitter/tree-sitter-toml")
             (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
             (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
@@ -806,6 +817,11 @@ We use an Org mode document for our Emacs configuration because it provides:
       ;;                          `(lambda (c)
       ;;                             (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
       )
+#+end_src
+
+*** COBOL mode
+#+begin_src emacs-lisp :tangle yes
+    (use-package cobol-mode :mode ("\\.cbl\\'" "\\.cpy\\'"))
 #+end_src
 
 **** Table of Contents
@@ -1176,4 +1192,4 @@ We also increase Read Process Output Max so Emacs can read more data.
                    ;; Match /path/to/file.ext:line:column (column is optional)
     			   "\s+\\([a-zA-Z0-9_./\\:-]+[exs|ex]\\):\\([0-9]+\\):\s"
                    1 2 3))
-#+end_src 
+#+end_src

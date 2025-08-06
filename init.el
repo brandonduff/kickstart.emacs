@@ -79,6 +79,12 @@
          )
   )
 
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (setenv "SHELL" "/usr/local/bin/zsh")
+  (exec-path-from-shell-initialize))
+
 (use-package general
   :config
   ;; (general-evil-setup) ;; <- evil
@@ -223,7 +229,7 @@
   :hook (prog-mode . yas-minor-mode))
 
 (setq treesit-language-source-alist
-      '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+      '((bash "https://github.com/tree-sitter/tree-sitter-bash" "master" "src")
         (cmake "https://github.com/uyha/tree-sitter-cmake")
         (c "https://github.com/tree-sitter/tree-sitter-c")
         (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
@@ -240,7 +246,6 @@
         (markdown "https://github.com/ikatyang/tree-sitter-markdown")
 		(nix "https://github.com/nix-community/tree-sitter-nix")
         (python "https://github.com/tree-sitter/tree-sitter-python")
-        (rust "https://github.com/tree-sitter/tree-sitter-rust")
         (toml "https://github.com/tree-sitter/tree-sitter-toml")
         (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
         (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
@@ -300,6 +305,8 @@
   ;;                          `(lambda (c)
   ;;                             (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
   )
+
+(use-package cobol-mode :mode ("\\.cbl\\'" "\\.cpy\\'"))
 
 (use-package toc-org
   :commands toc-org-enable
